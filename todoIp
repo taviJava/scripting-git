@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+# in file-ul ip.txt gasim numeroase ip-uri de tipul:
+# 194.131.205.190 GET 200
+# 222.129.41.212 GET 200
+# 137.126.109.160 GET 200
+# 224.57.91.248 GET 200
+# 88.249.123.246 GET 502
+# 63.219.2.31 GET 404
+# {print $1} = primul cuvant din lista adica ip-ul {print $2} = GET,POST,DELETE,PATCH etc. {print $3} = code return 200,500 etc
+# Cate ip-uri sunt diferite?
+var_numberDifferentIp=$(cat scripting/data/ip.txt | awk '{print $1}' | sort | uniq -c | wc -l)
+# Cate tipuri de exit code-uri exista?
+var_diffExitCodes=$(cat scripting/data/ip.txt | awk '{print $3}' | sort | uniq -c | wc -l)
+# Cat de des apare un ip?
+var_oftenIp=$(cat scripting/data/ip.txt | awk '{print $1}' | sort | uniq -c | sort -r)
+var_successCode=$(cat scripting/data/ip.txt | awk '{print $3}' | sort | uniq -c | grep '200' | awk '{print $1}')
+var_successIp=$(cat scripting/data/ip.txt | awk '{print $3,$1}' | sort | uniq -c | grep '200' | sort -r | head -1)
+var_errorIp=$(cat scripting/data/ip.txt | awk '{print $3,$1}' | sort | uniq -c | grep -v '200' | sort -r | head -1)
+# cat scripting/data/ip.txt | awk '{print $1}' | sort | uniq -c | wc -l
+# cat scripting/data/ip.txt = afiseaza informatile din file-ul ip.txt
+# awk '{print $1}' = doar primul parametru
+# sort = sorteaza
+# uniq -c = doar ce este unic
+# wc -l = numara linile inputului
+# sort -r = sorteaza descrescator
+# head -1 = primul din lista , daca era -2 al doi lea etc.
+# gerp '200' sa fie identic cu 200 si grep -v '200' contrariul
+# grep '200' = tot ce este egal cu 200
+echo "Numara cate ip-uri diferite sunt"
+
+echo "$var_numberDifferentIp"
+
+echo "Numara cate exit code-uri diferite sunt"
+
+echo "$var_diffExitCodes"
+echo "Cat de des apar ip-urile?"
+echo "$var_oftenIp"
+echo "Cate coduri exit codeuri de success avem?"
+echo "$var_successCode"
+echo "Care este Ip-ul care a avut rata cea mai mare de success?"
+echo "$var_successIp"
+echo "Care este ip-ul care a avut rata cea mai mare de eorare?"
+echo "$var_errorIp"
