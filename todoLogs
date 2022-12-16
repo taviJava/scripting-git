@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+row_info=$(cat scripting/data/hadoop.log | awk '{print $3}' | sort | uniq -c |grep 'INFO' | sort -r | awk '{print $1}')
+row_warn=$(cat scripting/data/hadoop.log | awk '{print $3}' | sort | uniq -c |grep 'WARN' | sort -r | awk '{print $1}')
+row_error=$(cat scripting/data/hadoop.log | awk '{print $3}' | sort | uniq -c |grep 'ERROR' | sort -r | awk '{print $1}')
+row_total=$(cat scripting/data/hadoop.log | wc -l)
+return_error_frequent=$(cat scripting/data/hadoop.log | awk '{print $3,$6}' | sort | uniq -c |grep 'ERROR' | sort -r | head -1)
+
+return_percent()
+{
+percent=$(awk "BEGIN { pc=100*$1/$2; i=int(pc); print (pc-i<0.5)?i:i+1 }")
+echo "$percent %"
+}
+
+echo "Cat la % din randuri avem INFO?"
+return_percent $row_info $row_total
+echo "Cat la % din randuri avem WARN?"
+return_percent $row_warn $row_total
+echo "Cat la % din randuri avem ERROR?"
+return_percent $row_error $row_total
+echo "Care este cea mai frecvent eroare?"
+echo "$return_error_frequent"
